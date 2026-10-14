@@ -1,0 +1,24 @@
+name: Password Guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Say hello
+        run: echo "Hello from the robot! Checking commit $GITHUB_SHA"
+
+      - name: Search for secrets
+        run: |
+          if grep -rniI "pass[w]ord" --exclude-dir=.git --exclude-dir=.github .; then
+            echo "::error::Found a secret word in the repository!"
+            exit 1
+          fi
+          echo "No secrets found. All clear!"
